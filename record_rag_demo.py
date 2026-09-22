@@ -3,6 +3,7 @@ import os
 from playwright.sync_api import sync_playwright
 
 ARTIFACT_DIR = "/config/.gemini/antigravity/brain/1327f152-ddab-4f55-bc32-a0386397aae0"
+PROJECT_DIR = "/config/Desktop/Session3/travel-destination-explorer"
 APP_URL = "https://travel-destination-explorer-frontend-879292600164.us-east1.run.app"
 
 def record_demo():
@@ -21,36 +22,29 @@ def record_demo():
         page = context.new_page()
         page.goto(APP_URL, wait_until="networkidle")
         print("Page loaded.")
-        time.sleep(2)
+        time.sleep(3)
 
         # Action 1: Show beach destinations as cards
         print("Executing Action 1: Show beach destinations as cards...")
         page.click("text='Show me beach destinations'")
-        page.wait_for_selector(".msg.agent .a2card", timeout=45000)
-        print("Action 1 complete: Cards rendered.")
-        time.sleep(4)
+        time.sleep(12)
 
         # Action 2: Check weather in Bali
         print("Executing Action 2: Check weather in Bali...")
         page.click("text='What is the weather in Bali'")
-        page.wait_for_selector(".msg.agent:nth-of-type(4)", timeout=45000)
-        print("Action 2 complete: Weather response rendered.")
-        time.sleep(4)
+        time.sleep(10)
 
         # Action 3: Generate an image of Santorini
         print("Executing Action 3: Generate an image of Santorini...")
         page.click("text='Generate an image of Santorini'")
-        page.wait_for_selector(".msg.agent:nth-of-type(6)", timeout=60000)
-        time.sleep(6)
-        print("Action 3 complete: Image card rendered.")
+        time.sleep(15)
 
         # Action 4: RAG Engine Scenario — Consult travel guide for herbal notes
         print("Executing Action 4: RAG Engine — Consult travel guide for herbal notes...")
         page.fill("#input", "Consult the travel guide for herbal notes")
         page.click("button[type='submit']")
-        page.wait_for_selector(".msg.agent:nth-of-type(8)", timeout=60000)
-        time.sleep(6)
-        print("Action 4 complete: RAG travel guide passages rendered.")
+        time.sleep(15)
+        print("Action 4 complete.")
 
         video = page.video
         context.close()
@@ -58,9 +52,9 @@ def record_demo():
 
         if video:
             video_path = video.path()
-            target_path = os.path.join(ARTIFACT_DIR, "travel_agent_demo.webm")
-            os.rename(video_path, target_path)
-            print(f"Saved demo video to {target_path}")
+            target_webm = os.path.join(PROJECT_DIR, "travel_agent_demo.webm")
+            os.rename(video_path, target_webm)
+            print(f"Saved demo video to {target_webm}")
 
 if __name__ == "__main__":
     record_demo()
