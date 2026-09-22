@@ -269,14 +269,29 @@ def consult_travel_guide(query: str) -> str:
 
     # Fallback to local indexed document pg49513.txt if vector search returns empty
     if not passages:
-        doc_path = os.path.join(os.path.dirname(__file__), "..", "pg49513.txt")
-        if os.path.exists(doc_path):
-            with open(doc_path, "r", encoding="utf-8", errors="ignore") as f:
-                content = f.read()
+        possible_paths = [
+            os.path.join(os.path.dirname(__file__), "pg49513.txt"),
+            os.path.join(os.path.dirname(__file__), "..", "pg49513.txt"),
+            os.path.join(os.getcwd(), "pg49513.txt"),
+            os.path.join(os.getcwd(), "app", "pg49513.txt"),
+            "/app/pg49513.txt",
+        ]
+        content = ""
+        for p in possible_paths:
+            if os.path.exists(p):
+                try:
+                    with open(p, "r", encoding="utf-8", errors="ignore") as f:
+                        content = f.read()
+                    if content:
+                        break
+                except Exception:
+                    pass
+        if content:
             terms = [t.lower() for t in query.split() if len(t) > 3]
             paras = [p.strip() for p in content.split("\n\n") if len(p.strip()) > 40]
             matches = [p for p in paras if any(t in p.lower() for t in terms)]
             passages = matches[:3]
+
 
     return "\n\n---\n\n".join(passages) or "No relevant passage found in travel guide."
 
